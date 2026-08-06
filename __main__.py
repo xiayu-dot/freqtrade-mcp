@@ -18,14 +18,17 @@ async def app_lifespan(server: FastMCP) -> AsyncIterator[dict]:
     """Manage the lifecycle of the Freqtrade REST client."""
     client = FtRestClient(FREQTRADE_API_URL, USERNAME, PASSWORD)
     try:
-        # Test API connectivity
-        if client.ping():
-            server.info("Connected to Freqtrade API")
-        else:
-            raise Exception("Failed to connect to Freqtrade API")
+        try:
+            ping_result = client.ping()
+            if ping_result and ping_result.get("status") == "pong":
+                print("Connected to Freqtrade API")
+            else:
+                print(f"Freqtrade API ping returned: {ping_result}, continuing anyway")
+        except (KeyError, TypeError) as e:
+            print(f"Freqtrade API ping skipped ({e}), continuing anyway")
         yield {"client": client}
     finally:
-        server.info("Freqtrade API client closed")
+        print("Freqtrade API client closed")
 
 # Initialize MCP server (only once, with lifespan)
 mcp = FastMCP("FreqtradeMCP", dependencies=["freqtrade-client"], lifespan=app_lifespan)
