@@ -298,6 +298,22 @@ def delete_lock(lock_id: int, ctx: Context) -> str:
     ctx.info(f"Deleted lock with ID {lock_id}")
     return str(response)
 
+@mcp.tool()
+def fetch_logs(limit: int = 0, ctx: Context = None) -> str:
+    """
+    Fetch the latest bot log messages.
+
+    Parameters:
+        limit (int): Maximum number of log lines to return. 0 (default) returns all available logs.
+        ctx (Context): MCP context object for logging and client access.
+
+    Returns:
+        str: Stringified JSON response with bot logs, or None if failed.
+    """
+    client: FtRestClient = ctx.request_context.lifespan_context["client"]
+    ctx.info(f"Fetching logs (limit={limit})")
+    return str(client.logs(limit=limit if limit > 0 else None))
+
 # Prompts (Updated to return list of dicts instead of Message objects)
 @mcp.prompt()
 def analyze_trade(pair: str, timeframe: str, ctx: Context) -> List[Dict[str, Any]]:

@@ -91,6 +91,7 @@ The server exposes the following Freqtrade API endpoints as MCP tools:
 | `fetch_trades`        | Get trade history                    | None                                |
 | `fetch_config`        | Get bot configuration                | None                                |
 | `fetch_locks`         | Get trade locks                      | None                                |
+| `fetch_logs`          | Get latest bot log messages          | `limit: int` (0 = all)              |
 | `place_trade`         | Place a buy/sell trade               | `pair: str`, `side: str`, `stake_amount: float` |
 | `start_bot`           | Start the bot                        | None                                |
 | `stop_bot`            | Stop the bot                         | None                                |
