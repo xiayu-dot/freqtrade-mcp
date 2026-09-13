@@ -35,21 +35,22 @@ mcp = FastMCP("FreqtradeMCP", dependencies=["freqtrade-client"], lifespan=app_li
 
 # Tools (Converted from resources and actions)
 @mcp.tool()
-def fetch_market_data(pair: str, timeframe: str, ctx: Context) -> str:
+def fetch_market_data(pair: str, timeframe: str, limit: int = 0, ctx: Context = None) -> str:
     """
     Fetch OHLCV data for a specified trading pair and timeframe.
-    
+
     Parameters:
         pair (str): Trading pair (e.g., "BTC/USDT").
         timeframe (str): Timeframe for the data (e.g., "1h", "5m").
+        limit (int): Limit result to the last n candles. 0 (default) returns the API default window.
         ctx (Context): MCP context object for logging and client access.
-    
+
     Returns:
         str: Stringified JSON response containing OHLCV data, or None if failed.
     """
     client: FtRestClient = ctx.request_context.lifespan_context["client"]
-    ctx.info(f"Fetching market data for {pair} with timeframe {timeframe}")
-    return str(client.pair_candles(pair=pair, timeframe=timeframe))
+    ctx.info(f"Fetching market data for {pair} with timeframe {timeframe} (limit={limit})")
+    return str(client.pair_candles(pair=pair, timeframe=timeframe, limit=limit if limit > 0 else None))
 
 @mcp.tool()
 def fetch_bot_status(ctx: Context) -> str:
